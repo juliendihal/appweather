@@ -2,9 +2,26 @@
   <div id="app">
     <main>
      <div class="search-box">
-       <input type="text" class="search-bar" placeholder="Search...">
-
+       <input type="text" 
+       class="search-bar" 
+       placeholder="Search..."
+        v-model="query"
+        @keypress="fetchWeather">
+   
      </div>
+    
+     <div class="weather-wrap" v-if="typeof weather.main != 'undefined' ">
+       <div class="location-box">
+       <div class="location">{{weather.name}},{{weather.sys.country}}</div>
+         <div class="date">Monday 29 january</div>
+     </div>
+     <div class="weather-box">
+       <div class="temp">{{Math.round(weather.main.temp)}}°C</div>
+       <div class="weather">{{weather.weather[0].main}}</div>
+       </div>
+         </div>
+       
+       
     </main>
  
   </div>
@@ -17,8 +34,24 @@ export default {
   name: 'App',
   data () {
   return{
-   api_key: 'e80edc122d0bfdb1b9a3dac129e2f56a'
+   api_key: '28998319256bdf4554a86fe420060ba2',
+   url_base: 'https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/',
+   query: '',
+   weather:{}
   }
+ },
+ methods:{
+   fetchWeather  (e) {
+     if(e.key == "Enter"){
+      fetch(`${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`)
+      .then(res => {
+        return res.json();
+      }).then(this.setResults);
+      }
+   },
+   setResults(results){
+     this.weather = results;
+   }
  }
 }
 </script>
@@ -70,4 +103,46 @@ export default {
     border-radius:0px 16px 0px 16px;
   }
 
+  .location-box .location{
+    color: white;
+    font-size:32px;
+    text-align: center;
+    text-shadow: 1px 3px rgba(0,0,0,0.25);
+  }
+  .location-box .date{
+    color: white;
+    font-size:20px;
+    text-align: center;
+    text-shadow: 1px 3px rgba(0,0,0,0.25);
+  }
+
+  .weather-box{
+    text-align: center;
+  }
+
+  .weather-box .temp{
+    display: inline-block;
+    padding: 10px 25px;
+    color: white;
+    font-size:102px;
+    font-weight: 900;
+    text-shadow: 3px 6px rgba(0,0,0,0.25);
+    background-color: rgba(255,255,255,0.25);
+    border-radius: 16px;
+    margin:30px 0px;
+    box-shadow: 3px 6px rgba(0,0,0,0.25);
+  }
+
+  .weather-box .weather{
+    color: white;
+    font-size: 48px;
+    font-style: italic;
+    text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+  }
+
+
+
 </style>
+
+
